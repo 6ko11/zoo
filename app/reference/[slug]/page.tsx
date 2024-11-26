@@ -2,8 +2,21 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { Card, CardContent } from "@/components/ui/card"
 
+// Define type for medals
+interface Medal {
+  name: string;
+  image: string;
+}
+
+// Define type for references
+interface Reference {
+  name: string;
+  headerImage: string;
+  medals: Medal[];
+}
+
 // This data should ideally come from a database or API
-const references = {
+const references: Record<string, Reference> = {
   'dinoparky': {
     name: 'DinoParky',
     headerImage: '/soubory/dinopark.jpg',
@@ -26,14 +39,7 @@ const references = {
   },
 }
 
-// Type for reference object
-interface Reference {
-  name: string;
-  headerImage: string;
-  medals: { name: string; image: string }[];
-}
-
-// Type for page props
+// Define the prop type for the page
 interface ReferencePageProps {
   params: {
     slug: string;
@@ -41,11 +47,13 @@ interface ReferencePageProps {
 }
 
 export default function ReferencePage({ params }: ReferencePageProps) {
-  const reference = references[params.slug as keyof typeof references];
+  // Access the reference by slug
+  const reference = references[params.slug];
 
+  // If the reference does not exist, trigger notFound
   if (!reference) {
-    notFound(); // If no reference is found, show the "not found" page
-    return null; // Prevent rendering the rest of the component
+    notFound();
+    return null; // Prevent rendering anything else if not found
   }
 
   return (
@@ -55,7 +63,7 @@ export default function ReferencePage({ params }: ReferencePageProps) {
           src={reference.headerImage}
           alt={reference.name}
           layout="fill"
-          objectFit="cover"
+          objectFit="cover" // This is fine, but check if it's appropriate for your Next.js version
           className="rounded-lg"
         />
       </div>
