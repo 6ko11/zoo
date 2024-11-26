@@ -14,7 +14,7 @@ const references = {
       { name: 'Tyrannosaurus Rex', image: '/soubory/tyranosaurusrex.jpg' },
     ]
   },
- 'eaza': {
+  'eaza': {
     name: 'Eaza',
     headerImage: '/soubory/dinopark.jpg',
     medals: [
@@ -23,14 +23,29 @@ const references = {
       { name: 'Tarbosaurus', image: '/soubory/tarbosaurus.jpg' },
       { name: 'Tyrannosaurus Rex', image: '/soubory/tyranosaurusrex.jpg' },
     ]
-  }, 
+  },
 }
 
-export default function ReferencePage({ params }: { params: { slug: string } }) {
-  const reference = references[params.slug]
+// Type for reference object
+interface Reference {
+  name: string;
+  headerImage: string;
+  medals: { name: string; image: string }[];
+}
+
+// Type for page props
+interface ReferencePageProps {
+  params: {
+    slug: string;
+  };
+}
+
+export default function ReferencePage({ params }: ReferencePageProps) {
+  const reference = references[params.slug as keyof typeof references];
 
   if (!reference) {
-    notFound()
+    notFound(); // If no reference is found, show the "not found" page
+    return null; // Prevent rendering the rest of the component
   }
 
   return (
@@ -44,9 +59,9 @@ export default function ReferencePage({ params }: { params: { slug: string } }) 
           className="rounded-lg"
         />
       </div>
-      
+
       <h1 className="text-4xl font-bold mb-8">{reference.name}</h1>
-      
+
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {reference.medals.map((medal, index) => (
           <Card key={index} className="overflow-hidden">
@@ -68,6 +83,5 @@ export default function ReferencePage({ params }: { params: { slug: string } }) 
         ))}
       </div>
     </div>
-  )
+  );
 }
-
